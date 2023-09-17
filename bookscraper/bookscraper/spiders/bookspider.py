@@ -2,6 +2,7 @@ import scrapy
 
 
 class BookspiderSpider(scrapy.Spider):
+    '''The spider aims to scrape all the relevant data for each book from all pages in the site and return a json or scv file, whichever is needed.'''
     name = "bookspider"
     allowed_domains = ["books.toscrape.com"]
     start_urls = ["https://books.toscrape.com/"]
