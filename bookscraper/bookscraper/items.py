@@ -6,11 +6,14 @@
 import scrapy
 
 
+
 # class BookscraperItem(scrapy.Item):
 #     # define the fields for your item here like:
 #     # name = scrapy.Field()
 #     pass
 
+def get_price(txt):
+    return float(txt.replace('£', ''))
 
 class BookItem(scrapy.Item):
     url =scrapy.Field()

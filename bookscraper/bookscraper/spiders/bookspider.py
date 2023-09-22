@@ -4,8 +4,23 @@ from bookscraper.items import BookItem
 class BookspiderSpider(scrapy.Spider):
     '''The spider aims to scrape all the relevant data for each book from all pages in the site and return a json or scv file, whichever is needed.'''
     name = "bookspider"
-    allowed_domains = ["books.toscrape.com"]
+    # allowed_domains = ["books.toscrape.com"]
     start_urls = ["https://books.toscrape.com/"]
+    cols =[
+        'url',
+        'title',
+        'upc',
+        'product_type',
+        'price_excl_tax',
+        'price_incl_tax',
+        'tax',
+        'availability',
+        'num_reviews',
+        'stars',
+        'category',
+        'description',
+        'price'
+    ]
 
     # THIS IS HOW TO EXTRACT EACH PRODUCT DATE FROM ALL PAGES
     # def parse(self, response):
@@ -26,6 +41,13 @@ class BookspiderSpider(scrapy.Spider):
     #         else:
     #             next_page_url ="https://books.toscrape.com/catalogue/" + next_page
     #         yield response.follow(next_page_url, callback=self.parse)
+
+    #allows you to override the general settings with custom ones
+    custom_settings = {
+        'FEEDS': {
+            'booksdata.json': {'format': 'json', 'overwrite':True}
+        }
+    }
 
     def parse(self, response):
         books=response.css('article.product_pod')
@@ -66,21 +88,21 @@ class BookspiderSpider(scrapy.Spider):
         #     'price': response.css("p.price_color ::text").get(),
         # }
 
-        book_item['url'] = response.url,
-        book_item['title'] = response.css('.product_main h1 ::text').get(),
+        book_item['url'] = response.url
+        book_item['title'] = response.css('.product_main h1 ::text').get()
         book_item['upc'] = table_rows[0].css("td ::text").get()
-        book_item['product_type'] = table_rows[1].css("td ::text").get(),
-        book_item['price_excl_tax'] = table_rows[2].css("td ::text").get(),
-        book_item['price_incl_tax'] = table_rows[3].css("td ::text").get(),
-        book_item['tax'] = table_rows[4].css("td ::text").get(),
-        book_item['availability'] = table_rows[5].css("td ::text").get(),
-        book_item['num_reviews'] = table_rows[6].css("td ::text").get(),
-        book_item['stars'] = response.css("p.star-rating").attrib['class'],
+        book_item['product_type'] = table_rows[1].css("td ::text").get()
+        book_item['price_excl_tax'] = table_rows[2].css("td ::text").get()
+        book_item['price_incl_tax'] = table_rows[3].css("td ::text").get()
+        book_item['tax'] = table_rows[4].css("td ::text").get()
+        book_item['availability'] = table_rows[5].css("td ::text").get()
+        book_item['num_reviews'] = table_rows[6].css("td ::text").get()
+        book_item['stars'] = response.css("p.star-rating").attrib['class']
         book_item['category'] = response.xpath(
-            "//ul[@class='breadcrumb']/li[@class='active']/preceding-sibling::li[1]/a/text()").get(),
+            "//ul[@class='breadcrumb']/li[@class='active']/preceding-sibling::li[1]/a/text()").get()
         book_item['description'] = response.xpath(
-            "//div[@id='product_description']/following-sibling::p/text()").get(),
-        book_item['price'] = response.css('p.price_color ::text').get(),
+            "//div[@id='product_description']/following-sibling::p/text()").get()
+        book_item['price'] = response.css('p.price_color ::text').get()
 
 
         yield book_item
